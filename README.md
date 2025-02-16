@@ -1,5 +1,5 @@
 <h1>Project Name</h1>
-....
+Simple github actions CI\CD pipeline
 
 
 
@@ -37,7 +37,8 @@
 
 <h2>References</h2>
 <ul>
-    <li>...</li>
-   
+    <li><a href='https://youtu.be/x239z6DdE0A'>Introduction to GitHub Actions: Learn Workflows with Examples</a></li>
+   <li><a href='https://youtu.be/Mir-uLSQmwA'> Efficiently Run GitHub Actions Workflows Locally with act Tool </a></li>
+   <li><a href='https://youtu.be/Aj8vqPHzDos'>Deploy Private Repos to VPS with GitHub Actions: Simplified Workflow</a></li>
 </ul>
 
