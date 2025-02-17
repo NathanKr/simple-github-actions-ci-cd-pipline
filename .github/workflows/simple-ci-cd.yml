@@ -6,28 +6,45 @@ on:
       - main
 
 jobs:
-  build:
+  ci-cd:
     runs-on: ubuntu-latest
 
+    env:
+      APP_NAME: ${{ github.event.repository.name }}  # Define the application name as the repository name
+      WORKING_FOLDER: ~/${{ github.event.repository.name }}  # Define the working directory as ~/repo-name      
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4  # Checkout the code so runner can access the repo files
+      - name: Get timestamp
+        run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3  # Install Node.js on the runner
-      with:
-        node-version: '20.9.0'
+      - name: Use timestamp
+        run: |
+          echo "Current timestamp: $TIMESTAMP"
 
-    - name: Install dependencies
-      run: npm install  # Install dependencies using npm
+      - name: Checkout code
+        uses: actions/checkout@v4  # Checkout the code so runner can access the repo files
 
-    - name: Run tests
-      run: npm run test  # Use the test script defined in package.json
+      - name: Setup Node.js
+        uses: actions/setup-node@v3  # Install Node.js on the runner
+        with:
+          node-version: '20.9.0'
 
-    - name: Build application
-      run: npm run build  # Use the build script defined in package.json
+      - name: Install dependencies
+        run: npm install  # Install dependencies using npm
 
-    - name: Start application with PM2
-      run: npx pm2 start npm --name "my-app" -- run start  # Use PM2 to start the application
+      - name: Run tests
+        run: npm run test  # Use the test script defined in package.json
 
+      - name: Build application
+        run: npm run build  # Use the build script defined in package.json
 
+      - name: Stop application with PM2
+        run: npx pm2 stop "${{ env.APP_NAME }}" || true  # Stop the application if it is running
+
+      - name: Start application with PM2
+        run: npx pm2 start npm --name "${{ env.APP_NAME }}" -- run start  # Use PM2 to start the application
+
+      # - name: Move application directory to timestamped folder
+      #   run: mv "${{ env.WORKING_FOLDER }}" "${{ env.WORKING_FOLDER }}-$TIMESTAMP"
+      #   env:
+      #     TIMESTAMP: ${{ env.TIMESTAMP }}  # Ensure TIMESTAMP is available in this step

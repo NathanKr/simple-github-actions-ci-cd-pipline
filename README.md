@@ -68,7 +68,7 @@ list here in order :
 
 <h2>Points of Interest</h2>
 <ul>
-    <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when keys are not involved</li>
+    <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when keys are not involved check e.g. tag 0.2</li>
    
 </ul>
 
