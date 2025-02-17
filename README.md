@@ -2,7 +2,7 @@
 Simple github actions CI\CD pipeline
 
 <h2>Project Description</h2>
-Provide simple github actions workflow for CI\CD pipeline and run it on digital ocean droplet - VPS
+Provide simple github actions workflow of CI\CD pipeline for private repo and run it on digital ocean droplet - VPS
 
 <h2>Motivation</h2>
 I all ready have a workflow which invokes unit test - <a href='#ref1'>[1]</a> and a workflow that deploy a private repo on vps - <a href='#ref3'>[3]</a> but it does not handles issues like installing depencies , compiling and stop\start the process . All will be done in this repository using a github actions workflow
@@ -22,6 +22,7 @@ copy the workflow to your repo
 <li>pm2</li>
 <li>node</li>
 <li>typescript</li>
+<li>vitest</li>
 </ul>
 
 
@@ -29,7 +30,7 @@ copy the workflow to your repo
 
 <h3>Assumptions</h3>
 <ul>
-<li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run once the workflow. thus : node is installed , ngnix is ok , cerbot is ok , domain is ok , ....... actually this one time setup is done and covered in my udemy course <a href='https://www.udemy.com/course/deploy-your-node-express-app-to-the-cloud/'>Deploy your Node\Express\React App to DigitalOcean</a></li>
+<li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run the workflow at least once . thus : node is installed , ngnix is ok , cerbot is ok , domain is ok , ....... actually this one time setup is done and covered in my udemy course <a href='https://www.udemy.com/course/deploy-your-node-express-app-to-the-cloud/'>Deploy your Node\Express\React App to DigitalOcean</a></li>
 </ul>
 
 
@@ -72,7 +73,7 @@ list here in order :
 </ul>
 
 <h2>Future work</h2>
-Try to make a generic workflow : may be put operations is bash scripts
+Try to make a generic workflow : may be put operations in bash scripts
 
 <h2>References</h2>
 <ol>
