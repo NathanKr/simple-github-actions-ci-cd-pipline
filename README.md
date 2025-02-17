@@ -68,7 +68,7 @@ list here in order :
 
 <h2>Points of Interest</h2>
 <ul>
-    <li>...</li>
+    <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when keys are not involved</li>
    
 </ul>
 
@@ -78,6 +78,6 @@ Try to make a generic workflow : may be put operations in bash scripts
 <h2>References</h2>
 <ol>
     <li id='ref1'><a href='https://youtu.be/x239z6DdE0A'>Introduction to GitHub Actions: Learn Workflows with Examples</a></li>
-   <li><a href='https://youtu.be/Mir-uLSQmwA'> Efficiently Run GitHub Actions Workflows Locally with act Tool </a></li>
+   <li id='ref2'><a href='https://youtu.be/Mir-uLSQmwA'> Efficiently Run GitHub Actions Workflows Locally with act Tool </a></li>
    <li id='ref3'><a href='https://youtu.be/Aj8vqPHzDos'>Deploy Private Repos to VPS with GitHub Actions: Simplified Workflow</a></li>
 </ol>
