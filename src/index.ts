@@ -8,4 +8,4 @@ const getMsec = () => new Date().getTime();
 const startMs = getMsec();
 const func = () => console.log(` Elapsed : ${getMsec() - startMs} [Ms]`);
 
-// setInterval(func, PERIOD_SEC * 1000);
+setInterval(func, PERIOD_SEC * 1000);

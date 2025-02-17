@@ -27,7 +27,7 @@ jobs:
     - name: Build application
       run: npm run build  # Use the build script defined in package.json
 
-    - name: Start application
-      run: npm run start  # Use the start script defined in package.json
+    - name: Start application with PM2
+      run: npx pm2 start npm --name "my-app" -- run start  # Use PM2 to start the application
 
 
