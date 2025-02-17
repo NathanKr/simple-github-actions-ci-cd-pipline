@@ -1,0 +1,49 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create tmp directory
+        run: mkdir tmp
+
+      - name: Clone repo
+        run: git clone ${{ github.repository_url }} tmp
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./tmp
+
+      - name: Compile
+        run: npm run build
+        working-directory: ./tmp
+
+      - name: Run tests
+        run: npm test
+        working-directory: ./tmp
+
+      - name: Stop application
+        run: sudo systemctl stop myapp
+
+      - name: Rename original folder
+        run: mv myapp myapp_orig
+
+      - name: Rename tmp to original
+        run: mv tmp myapp
+
+      - name: Start application
+        run: sudo systemctl start myapp
