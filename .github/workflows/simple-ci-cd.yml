@@ -54,8 +54,10 @@ jobs:
       - name: Install dependencies on VPS
         run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && npm install"  # Install dependencies using npm on the VPS
     
+
       - name: Run tests on VPS
-        run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && npm run test"  # Run tests using npm on the VPS
+        run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && npm run test -- --run"  # Run tests in non-watch mode on the VPS
+    
 
       - name: Build application on VPS
         run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && NODE_ENV=production npm run build"  # Build the application using npm on the VPS
