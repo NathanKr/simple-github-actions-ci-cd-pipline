@@ -11,9 +11,9 @@ jobs:
 
     env:
       APP_NAME: ${{ github.event.repository.name }}  # Define the application name as the repository name
-      WORKING_FOLDER: ~/${{ github.event.repository.name }}  # Define the working directory as ~/repo-name      
-      OLD_WORKING_FOLDER: ~/${{ github.event.repository.name }}_old_${{ github.run_number }} # Define the old working directory with run number
-      NEW_WORKING_FOLDER: ~/${{ github.event.repository.name }}_new_${{ github.run_number }} # Define the new working directory with run number
+      WORKING_FOLDER: $HOME/${{ github.event.repository.name }}  # Define the working directory as ~/repo-name      
+      OLD_WORKING_FOLDER: $HOME/${{ github.event.repository.name }}_old_${{ github.run_number }} # Define the old working directory with run number
+      NEW_WORKING_FOLDER: $HOME/${{ github.event.repository.name }}_new_${{ github.run_number }} # Define the new working directory with run number
 
     steps:
       - name: Checkout code
