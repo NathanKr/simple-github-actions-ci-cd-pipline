@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4  # Checkout the code so runner can access the repo files
         with:
-          path: ${{ env.NEW_WORKING_FOLDER }}  # Specify the target directory for the checkout
+          path: ${{ env.NEW_WORKING_FOLDER }}  # todo nath : is it working on the VPS. Specify the target directory for the checkout
 
       - name: Setup Node.js
         uses: actions/setup-node@v3  # Install Node.js on the runner

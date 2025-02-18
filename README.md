@@ -35,6 +35,12 @@ if you want to check it locally or push to main branch
 
 <h2>Design</h2>
 
+<h3>Goals</h3>
+<ul>
+<li>I want the workflow to keep the prev clone so i can do roolback if required</li>
+</ul>
+
+
 <h3>Assumptions</h3>
 <ul>
 <li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run the workflow at least once . thus : node is installed , ngnix is ok , cerbot is ok , domain is ok , ....... actually this one time setup is done and covered in my udemy course <a href='https://www.udemy.com/course/deploy-your-node-express-app-to-the-cloud/'>Deploy your Node\Express\React App to DigitalOcean</a></li>
@@ -58,15 +64,15 @@ should i use docker ??
 <h2>Code Structure - operations</h2>
 list here in order : 
 <ul>
-  <li>create tmp directory</li>
-  <li>clone repo (may be private)</li>
-  <li>install : dependencies , environemt variables , ... </li>
-  <li>compile</li>
-  <li>invoke test</li>
-  <li>stop application</li>
-  <li>rename orig folder</li>
-  <li>rename this tmp to orig</li>
-  <li>start application</li>
+  <li>Checkout code</li>
+  <li>Setup Node.js</li>
+  <li>Install dependencies</li>
+  <li>Run tests</li>
+  <li>Build application</li>
+  <li>Stop application with PM2 (if running)</li>
+  <li>Move WORKING_FOLDER to OLD_WORKING_FOLDER</li>
+  <li>Move NEW_WORKING_FOLDER to WORKING_FOLDER</li>
+  <li>Restart application with PM2</li>
 </ul>
 
 
@@ -76,7 +82,6 @@ list here in order :
 <h2>Points of Interest</h2>
 <ul>
     <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when keys are not involved check e.g. tag 0.2</li>
-   <li>Saving the prev clone is usefull for rollback in case of problems with the new release</li>
 </ul>
 
 <h2>Future work</h2>
@@ -87,6 +92,7 @@ list here in order :
 
 <h2>Open issues</h2>
 <ul>
+<li>i am able to run simple-ci-cd.yml on github but yet i get remarks from gemini that checkout  with: path: ${{ env.NEW_WORKING_FOLDER }}  will not work. need to check this on the droplet</li>
 <li>running act i get error '| (node:67) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit'</li>
 </ul>
 
