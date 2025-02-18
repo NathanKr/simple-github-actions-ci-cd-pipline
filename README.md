@@ -44,7 +44,7 @@ if you want to check it locally or push to main branch
 
 <h3>Assumptions</h3>
 <ul>
-<li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run the workflow at least once . thus : node is installed , ngnix is ok , cerbot is ok , domain is ok , ....... actually this one time setup is done and covered in my udemy course <a href='https://www.udemy.com/course/deploy-your-node-express-app-to-the-cloud/'>Deploy your Node\Express\React App to DigitalOcean</a></li>
+<li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run the workflow at least once . thus : node\npm is installed , ngnix is ok , cerbot is ok , domain is ok , ....... actually this one time setup is done and covered in my udemy course <a href='https://www.udemy.com/course/deploy-your-node-express-app-to-the-cloud/'>Deploy your Node\Express\React App to DigitalOcean</a></li>
 </ul>
 
 

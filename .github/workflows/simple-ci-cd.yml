@@ -31,10 +31,15 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             echo "StrictHostKeyChecking no" > ~/.ssh/config
   
+                    
       - name: Transfer GITHUB_TOKEN to VPS
         run: |
             ssh $USER@$VPS_IP "echo '${{ secrets.GITHUB_TOKEN }}' > $GITHUB_TOKEN_FILE"
     
+      - name: Clean up NEW_WORKING_FOLDER if it already exists # can happen for re-run from github dashboard
+        run: ssh $USER@$VPS_IP "rm -rf $NEW_WORKING_FOLDER"
+
+
       - name: Clone Repository on VPS
         run: |
           ssh $USER@$VPS_IP "
