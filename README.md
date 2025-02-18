@@ -8,10 +8,17 @@ Provide simple github actions workflow of CI\CD pipeline for private repo and ru
 I all ready have a workflow which invokes unit test - <a href='#ref1'>[1]</a> and a workflow that deploy a private repo on vps - <a href='#ref3'>[3]</a> but it does not handles issues like installing depencies , compiling and stop\start the process . All will be done in this repository using a github actions workflow
 
 <h2>Installation</h2>
-....
+Same as in <a href='#ref3'>[3]</a>
+
 
 <h2>Usage</h2>
-copy the workflow to your repo
+invoke 
+
+```bash
+act
+```
+
+if you want to check it locally or push to main branch
 
 
 <h2>Technologies Used</h2>
@@ -69,11 +76,14 @@ list here in order :
 <h2>Points of Interest</h2>
 <ul>
     <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when keys are not involved check e.g. tag 0.2</li>
-   
+   <li>Saving the prev clone is usefull for rollback in case of problems with the new release</li>
 </ul>
 
 <h2>Future work</h2>
-Try to make a generic workflow : may be put operations in bash scripts
+<ul>
+<li>Try to do more generic workflow : may be put operations in bash scripts</li>
+<li>Use for more realistic repo e.g. next.js with environemnt variable</li>
+</ul>
 
 <h2>References</h2>
 <ol>
