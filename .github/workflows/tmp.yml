@@ -1,0 +1,19 @@
+name: Echo Run Details
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  echo-run-details:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Echo Run Details
+        run: |
+          echo "github.run_number: ${{ github.run_number }} - A unique number for each run of a workflow."
+          echo "github.run_id: ${{ github.run_id }} - A unique identifier for each run of a workflow."
