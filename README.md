@@ -85,6 +85,13 @@ list here in order :
 <li>Use for more realistic repo e.g. next.js with environemnt variable</li>
 </ul>
 
+<h2>Open issues</h2>
+<ul>
+<li>running act i get error '| (node:67) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit'</li>
+</ul>
+
+
+
 <h2>References</h2>
 <ol>
     <li id='ref1'><a href='https://youtu.be/x239z6DdE0A'>Introduction to GitHub Actions: Learn Workflows with Examples</a></li>
