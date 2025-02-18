@@ -12,11 +12,14 @@ jobs:
     env:
       APP_NAME: ${{ github.event.repository.name }}  # Define the application name as the repository name
       WORKING_FOLDER: ~/${{ github.event.repository.name }}  # Define the working directory as ~/repo-name      
+      OLD_WORKING_FOLDER: ~/${{ github.event.repository.name }}_old_${{ github.run_number }} # Define the old working directory with run number
+      NEW_WORKING_FOLDER: ~/${{ github.event.repository.name }}_new_${{ github.run_number }} # Define the new working directory with run number
 
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4  # Checkout the code so runner can access the repo files
+        with:
+          path: ${{ env.NEW_WORKING_FOLDER }}  # Specify the target directory for the checkout
 
       - name: Setup Node.js
         uses: actions/setup-node@v3  # Install Node.js on the runner
@@ -25,20 +28,25 @@ jobs:
 
       - name: Install dependencies
         run: npm install  # Install dependencies using npm
+        working-directory: ${{ env.NEW_WORKING_FOLDER }}  # Specify the working directory
 
       - name: Run tests
         run: npm run test  # Use the test script defined in package.json
+        working-directory: ${{ env.NEW_WORKING_FOLDER }}  # Specify the working directory
 
       - name: Build application
         run: npm run build  # Use the build script defined in package.json
+        working-directory: ${{ env.NEW_WORKING_FOLDER }}  # Specify the working directory
 
       - name: Stop application with PM2
         run: npx pm2 stop "${{ env.APP_NAME }}" || true  # Stop the application if it is running
 
+      - name: Move WORKING_FOLDER to OLD_WORKING_FOLDER
+        run: mv $WORKING_FOLDER $OLD_WORKING_FOLDER  # Move the working folder to the old working folder
+
+      - name: Move NEW_WORKING_FOLDER to WORKING_FOLDER
+        run: mv $NEW_WORKING_FOLDER $WORKING_FOLDER  # Move the new working folder to the working folder
+
       - name: Start application with PM2
         run: npx pm2 start npm --name "${{ env.APP_NAME }}" -- run start  # Use PM2 to start the application
-
-      # - name: Move and Rename Working Folder
-      #   run: |
-      #     TIMESTAMP=$(date -u +'%Y-%d-%m_%H-%M-%S')
-      #     mv $WORKING_FOLDER ~/${{ github.event.repository.name }}_${TIMESTAMP}
+        working-directory: ${{ env.WORKING_FOLDER }}  # Specify the working directory
