@@ -23,8 +23,8 @@ if you want to check it locally or push to main branch
 
 <h2>Technologies Used</h2>
 <ul>
-<li>Github actions</li>
-<li>act ??</li>
+<li>Github actions : github.run_number , github.event.repository.name</li>
+<li>act</li>
 <li>linux on VPS</li>
 <li>pm2</li>
 <li>node</li>
@@ -37,6 +37,7 @@ if you want to check it locally or push to main branch
 
 <h3>Goals</h3>
 <ul>
+<li>automatic , obseravable  free flow to install upon push repo (including private) on VPS</li>
 <li>I want the workflow to keep the prev clone so i can do roolback if required</li>
 </ul>
 
@@ -82,12 +83,13 @@ list here in order :
 <h2>Points of Interest</h2>
 <ul>
     <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when keys are not involved check e.g. tag 0.2</li>
+    <li>i was looking for unique identifier to store old repo versions on the vps. i was thinking about time stamp and this was used in few steps. i was trying to use env but it gave warning. so instead i have used github actions out of the box constant  </li>
 </ul>
 
 <h2>Future work</h2>
 <ul>
 <li>Try to do more generic workflow : may be put operations in bash scripts</li>
-<li>Use for more realistic repo e.g. next.js with environemnt variable</li>
+<li>Use for more realistic repo e.g. next.js with environemnt variable - github.run_number. This increment but one on every run and is id also on the github repo datshboard under actions</li>
 </ul>
 
 <h2>Open issues</h2>
