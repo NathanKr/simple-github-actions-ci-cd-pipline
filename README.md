@@ -14,7 +14,7 @@ Set VPS_IP and VPS_CICD_PRIVATE_KEY as in <a href='#ref3'>[3]</a>
 <h2>Usage</h2>
 
 <h3>General</h3>
-invoke the following if you want to check the workflow locally at early stages
+invoke the following if  you want to check the workflow locally at early stages
 
 ```bash
 act
