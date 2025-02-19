@@ -65,24 +65,15 @@ jobs:
       - name: Stop application with PM2 (if running)
         run:  |
           ssh $USER@$VPS_IP "
-          pm2 list | grep -q '${{ env.APP_NAME }}'
+          npx pm2 list | grep -q '${{ env.APP_NAME }}'
           if [ $? -eq 0 ]; then  # Check if the exit status ($?) is 0
-            pm2 stop '${{ env.APP_NAME }}';
+            npx pm2 stop '${{ env.APP_NAME }}';
             echo 'Process ${{ env.APP_NAME }} stopped.';
           else
             echo 'Process ${{ env.APP_NAME }} not found, skipping stop command.';
           fi
           "
 
-      # - name: Stop application with PM2 (if running)
-      #   run: |
-      #     ssh $USER@$VPS_IP "
-      #       if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
-      #         npx pm2 stop '${{ env.APP_NAME }}';
-      #       else
-      #         echo 'Process ${{ env.APP_NAME }} not found, skipping stop command.';
-      #       fi
-      #     "
 
       - name: Move WORKING_FOLDER to OLD_WORKING_FOLDER
         run: ssh $USER@$VPS_IP "
