@@ -65,8 +65,8 @@ jobs:
       - name: Stop application with PM2 (if running)
         run: |
           ssh $USER@$VPS_IP "
-            if pm2 list | grep -q '${{ env.APP_NAME }}'; then
-              pm2 stop '${{ env.APP_NAME }}';
+            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              npx pm2 stop '${{ env.APP_NAME }}';
             fi
           "
 
@@ -82,11 +82,11 @@ jobs:
       - name: Restart application with PM2
         run: | 
           ssh $USER@$VPS_IP "
-            if pm2 list | grep -q '${{ env.APP_NAME }}'; then
-              pm2 restart '${{ env.APP_NAME }}';
+            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              npx pm2 restart '${{ env.APP_NAME }}';
             else
-              pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+              npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
             fi
-            pm2 save
+            npx pm2 save
           "
 
