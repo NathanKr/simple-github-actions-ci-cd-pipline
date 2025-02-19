@@ -67,6 +67,8 @@ jobs:
           ssh $USER@$VPS_IP "
             if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
               npx pm2 stop '${{ env.APP_NAME }}';
+            else
+              echo 'Process ${{ env.APP_NAME }} not found, skipping stop command.';
             fi
           "
 
