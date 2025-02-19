@@ -14,7 +14,7 @@ I already have a workflow that invokes unit tests (<a href='#ref1'>[1]</a>) and 
 Set VPS_IP and VPS_CICD_PRIVATE_KEY as in <a href='#ref3'>[3]</a>
 
 <h3>VPS</h3>
-I concentrate here on the <strong>CI/CD</strong> pipeline and assume the VPS is configured such that it has already run the workflow at least once. Thus: the user cicd exists, node/npm/pm2 are installed, nginx is OK, and so on.
+I concentrate here on the <strong>CI/CD</strong> pipeline and assume the VPS is configured such that it has already run the workflow at least once. Thus: the user cicd exists, node/npm are installed, nginx is OK, and so on.
 
 
 <h2>Usage</h2>
@@ -137,12 +137,17 @@ set -e
         run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && NODE_ENV=production npm run build"  # Build the application using npm on the VPS
 
       - name: Stop application with PM2 (if running)
-        run: |
+        run:  |
           ssh $USER@$VPS_IP "
-            if pm2 list | grep -q '${{ env.APP_NAME }}'; then
-              pm2 stop '${{ env.APP_NAME }}';
-            fi
+          npx pm2 list | grep -q '${{ env.APP_NAME }}'
+          if [ $? -eq 0 ]; then  # Check if the exit status ($?) is 0
+            npx pm2 stop '${{ env.APP_NAME }}';
+            echo 'Process ${{ env.APP_NAME }} stopped.';
+          else
+            echo 'Process ${{ env.APP_NAME }} not found, skipping stop command.';
+          fi
           "
+
 
       - name: Move WORKING_FOLDER to OLD_WORKING_FOLDER
         run: ssh $USER@$VPS_IP "
@@ -156,12 +161,12 @@ set -e
       - name: Restart application with PM2
         run: | 
           ssh $USER@$VPS_IP "
-            if pm2 list | grep -q '${{ env.APP_NAME }}'; then
-              pm2 restart '${{ env.APP_NAME }}';
+            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              npx pm2 restart '${{ env.APP_NAME }}';
             else
-              pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+              npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
             fi
-            pm2 save
+            npx pm2 save
           "
 
 ```
