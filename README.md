@@ -1,8 +1,8 @@
 <h1>Project Name</h1>
-Simple CI\CD workflow with github actions
+Simple <strong>CI\CD</strong> workflow with github actions
 
 <h2>Project Description</h2>
-Provide simple github actions workflow of CI\CD pipeline for private repo and run it on digital ocean droplet - VPS
+Provide simple github actions workflow of <strong>CI\CD</strong> pipeline for private GITHUB repo and run it on digital ocean droplet - VPS
 
 <h2>Motivation</h2>
 I all ready have a workflow which invokes unit test - <a href='#ref1'>[1]</a> and a workflow that deploy a private repo on vps - <a href='#ref3'>[3]</a> but it does not handles issues like installing depencies , compiling and stop\start the process . All will be done in this repository using a github actions workflow
@@ -12,21 +12,30 @@ I all ready have a workflow which invokes unit test - <a href='#ref1'>[1]</a> an
 Set VPS_IP and VPS_CICD_PRIVATE_KEY as in <a href='#ref3'>[3]</a>
 
 <h3>VPS</h3>
-i concentrate here on ci \ cd pipline thus assume the VPS is configured such that it was all ready able to run the workflow at least once . Thus : user cicd exist , node\npm is installed , ngnix is ok and so on
+I concentrate here on <strong>CI\CD</strong> pipline and assume the VPS is configured such that it was all ready able to run the workflow at least once . Thus : user cicd exist , node\npm\pm2 is installed , ngnix is ok and so on
 
 <h2>Usage</h2>
 
 <h3>General</h3>
-invoke the following if  you want to check the workflow locally at early stages
+
+Push to main branch on final stages
+
+
+Invoke the following if you want to check the workflow locally at early stages (without ssh)
 
 ```bash
 act
 ```
 
- push to main branch on final stages
  
  <h3>Tweaks</h3>
-It is exepected that you take the simple-ci-cd.yml workflow , copy it to your repo and tweak to your need. for ...............
+It is exepected that you take the simple-ci-cd.yml workflow , copy it to your repo and tweak to your need. for example 
+<ul>
+<li>Use different USER on the VPS</li>
+<li>Remove the token steps if the repo is public</li>
+<li>May be you use cron instead of pm2 so you need to tweak the steps with pm2</li>
+<li>And so on ...</li>
+</ul>
 
 <h2>Technologies Used</h2>
 <ul>
@@ -45,24 +54,27 @@ It is exepected that you take the simple-ci-cd.yml workflow , copy it to your re
 
 <h3>Goals</h3>
 <ul>
-<li>automatic , obseravable  free workflow to be installed upon push repo (including private) on VPS</li>
+<li>Automatic , obseravable  free workflow to be installed upon push repo (including private) on VPS</li>
 <li>I want the workflow to keep the prev clone so i can do roolback if required</li>
 </ul>
 
 
 
 <h3>Questions</h3>
+The following are questions that i have asked myself when i started , here are also the answers i came with during the develoment of the workflow
+
 <h4>Bash commands</h4>
 <strong>Question : </strong>
 use workflow with only bash commands or compose from other scripts \ node code ??
 <p><strong>Answer : </strong>
-i want to make it simple so use only bash command. However you can split it to few scripts with bash commands where each has <code>#!/bin/bash; set -e;</code> so it will stop on the problematic command and you will see this in githun dashboard</p>
+I want to make it simple so use only bash command. However you can split it to few scripts with bash commands where each has <pre><code>#!/bin/bash;
+ set -e;</code></pre> so it will stop on the problematic command and you will see this in githun dashboard</p>
 
 <h4>Docker</h4>
 <strong>Question : </strong>
-should i use docker ??
+Should i use docker ??
 
-<p><strong>Answer : </strong>i assume that the VPS is configured such that at least one workflow all ready run correct.so i dont use docker - i want to concentrate of ci \ cd (clone , install, test , run) not on system administration</p>
+<p><strong>Answer : </strong>I assume that the VPS is configured such that at least one workflow all ready run correct. So i dont use docker - i want to concentrate of <strong>CI\CD</strong> (clone , install, test , run ... ) not on system administration</p>
 
 <h2>Code Structure</h2>
 The workflow is simple-ci-cd.yml under .github/workflows
@@ -131,8 +143,8 @@ The workflow is simple-ci-cd.yml under .github/workflows
       - name: Stop application with PM2 (if running)
         run: |
           ssh $USER@$VPS_IP "
-            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
-              npx pm2 stop '${{ env.APP_NAME }}';
+            if pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              pm2 stop '${{ env.APP_NAME }}';
             fi
           "
 
@@ -148,43 +160,38 @@ The workflow is simple-ci-cd.yml under .github/workflows
       - name: Restart application with PM2
         run: | 
           ssh $USER@$VPS_IP "
-            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
-              npx pm2 restart '${{ env.APP_NAME }}';
+            if pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              pm2 restart '${{ env.APP_NAME }}';
             else
-              npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+              pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
             fi
-            npx pm2 save
+            pm2 save
           "
 
 ```
 
 
 <h2>Demo</h2>
-The follwoing is an images of a success workflow run
+The follwoing is an image of a success workflow run
 
 <img src='./figs/success-run.png'/>
 
-The follwoing is an images of the workflow details
+The follwoing is an image of the workflow details - the lasts steps are shown
 <img src='./figs/success-run-details.png'/>
 
 
 <h2>Points of Interest</h2>
 <ul>
-    <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when keys are not involved check e.g. tag 0.2</li>
-    <li>i was looking for unique identifier to store old repo versions on the vps. i was thinking about time stamp and this was used in few steps. i was trying to use env but it gave warning. so instead i have used github actions out of the box constant  </li>
+    <li>It is usefull to use act <a href='#ref2'>[2]</a> at least when SSH and keys are not involved check e.g. tag 0.2</li>
+    <li>I was looking for unique identifier to store old repo versions on the VPS. i was thinking about time stamp and this was used in few steps. i was trying to use env but it gave warning. so instead i have used github actions out of the box constant  </li>
+    <li>github.run_number : This increment by one on every run and is id also on the github repo datshboard under actions</li>
 </ul>
 
 <h2>Future work</h2>
 <ul>
 <li>Try to do more generic workflow : may be put operations in bash scripts</li>
-<li>Use for more realistic repo e.g. next.js with environemnt variable - github.run_number. This increment but one on every run and is id also on the github repo datshboard under actions</li>
-<li>Currently the github token is copied to the vps (and later deleted) but altough the vps should be secured its not optimal for security reasons. you might clone the repo on the runner and copy it to vps </li>
-</ul>
-
-<h2>Open issues</h2>
-<ul>
-<li>i am able to run simple-ci-cd.yml on github but yet i get remarks from gemini that checkout  with: path: ${{ env.NEW_WORKING_FOLDER }}  will not work. need to check this on the droplet</li>
-<li>running act i get error '| (node:67) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit'</li>
+<li>Use for more realworld repo e.g. next.js with environemnt variables</li>
+<li>Currently the github token is copied to the VPS (and later deleted) but altough the VPS should be secured its not optimal for security reasons. you might clone the repo on the runner and copy it to VPS </li>
 </ul>
 
 
