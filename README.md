@@ -8,27 +8,32 @@ Provide simple github actions workflow of CI\CD pipeline for private repo and ru
 I all ready have a workflow which invokes unit test - <a href='#ref1'>[1]</a> and a workflow that deploy a private repo on vps - <a href='#ref3'>[3]</a> but it does not handles issues like installing depencies , compiling and stop\start the process . All will be done in this repository using a github actions workflow
 
 <h2>Installation</h2>
-Same as in <a href='#ref3'>[3]</a>
+Set VPS_IP and VPS_CICD_PRIVATE_KEY as in <a href='#ref3'>[3]</a>
 
 
 <h2>Usage</h2>
-invoke 
+
+<h3>General</h3>
+invoke the following if you want to check the workflow locally at early stages
 
 ```bash
 act
 ```
 
-if you want to check it locally or push to main branch
-
+ push to main branch on final stages
+ 
+ <h3>Tweaks</h3>
+It is exepected that you take the simple-ci-cd.yml workflow , copy it to your repo and tweak to your need. for ...............
 
 <h2>Technologies Used</h2>
 <ul>
 <li>Github actions : github.run_number , github.event.repository.name</li>
-<li>act</li>
-<li>linux on VPS</li>
-<li>pm2</li>
+<li>linux on VPS - ubunto</li>
+<li>digital ocean - VPS provider via droplet </li>
 <li>node</li>
 <li>typescript</li>
+<li>pm2</li>
+<li>act</li>
 <li>vitest</li>
 </ul>
 
@@ -37,14 +42,14 @@ if you want to check it locally or push to main branch
 
 <h3>Goals</h3>
 <ul>
-<li>automatic , obseravable  free flow to install upon push repo (including private) on VPS</li>
+<li>automatic , obseravable  free workflow to be installed upon push repo (including private) on VPS</li>
 <li>I want the workflow to keep the prev clone so i can do roolback if required</li>
 </ul>
 
 
 <h3>Assumptions</h3>
 <ul>
-<li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run the workflow at least once . thus : node\npm is installed , ngnix is ok , cerbot is ok , domain is ok , ....... actually this one time setup is done and covered in my udemy course <a href='https://www.udemy.com/course/deploy-your-node-express-app-to-the-cloud/'>Deploy your Node\Express\React App to DigitalOcean</a></li>
+<li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run the workflow at least once . thus : user cicd exist , node\npm is installed , ngnix is ok</li>
 </ul>
 
 
@@ -62,23 +67,109 @@ should i use docker ??
 
 <p><strong>Answer : </strong>i assume that the VPS is configured such that at least one workflow all ready run correct.so i dont use docker - i want to concentrate of ci \ cd (clone , install, test , run) not on system administration</p>
 
-<h2>Code Structure - operations</h2>
-list here in order : 
-<ul>
-  <li>Checkout code</li>
-  <li>Setup Node.js</li>
-  <li>Install dependencies</li>
-  <li>Run tests</li>
-  <li>Build application</li>
-  <li>Stop application with PM2 (if running)</li>
-  <li>Move WORKING_FOLDER to OLD_WORKING_FOLDER</li>
-  <li>Move NEW_WORKING_FOLDER to WORKING_FOLDER</li>
-  <li>Restart application with PM2</li>
-</ul>
+<h2>Code Structure</h2>
+The workflow is simple-ci-cd.yml under .github/workflows
+
+<h3>workflow variables</h3>
+
+```yml
+
+    env:
+      USER: cicd
+      VPS_IP: ${{ secrets.VPS_IP }}
+      GITHUB_TOKEN_FILE: ~/github_token
+      APP_NAME: ${{ github.event.repository.name }}  # Define the application name as the repository name
+      WORKING_FOLDER: $HOME/${{ github.event.repository.name }}  # Define the working directory as ~/repo-name      
+      OLD_WORKING_FOLDER: $HOME/${{ github.event.repository.name }}_old_${{ github.run_number }} # Define the old working directory with run number
+      NEW_WORKING_FOLDER: $HOME/${{ github.event.repository.name }}_new_${{ github.run_number }} # Define the new working directory with run number
+
+```
+
+<h3>Workflow steps</h3>
+
+```yml
+      - name: Checkout code
+        uses: actions/checkout@v4  # Checkout the code so runner can access the repo files
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure SSH (on GitHub Actions runner)
+        run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.VPS_CICD_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            echo "StrictHostKeyChecking no" > ~/.ssh/config
+  
+                    
+      - name: Transfer GITHUB_TOKEN to VPS
+        run: |
+            ssh $USER@$VPS_IP "echo '${{ secrets.GITHUB_TOKEN }}' > $GITHUB_TOKEN_FILE"
+    
+      - name: Clean up NEW_WORKING_FOLDER if it already exists # can happen for re-run from github dashboard
+        run: ssh $USER@$VPS_IP "rm -rf $NEW_WORKING_FOLDER"
+
+
+      - name: Clone Repository on VPS
+        run: |
+          ssh $USER@$VPS_IP "
+            export GITHUB_TOKEN=$(cat $GITHUB_TOKEN_FILE)
+            git clone https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} $NEW_WORKING_FOLDER
+          "
+
+      - name: Delete GITHUB_TOKEN from VPS
+        run: |
+            ssh $USER@$VPS_IP "rm $GITHUB_TOKEN_FILE"
+
+      - name: Install dependencies on VPS
+        run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && npm install"  # Install dependencies using npm on the VPS
+    
+
+      - name: Run tests on VPS
+        run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && npm run test -- --run"  # Run tests in non-watch mode on the VPS
+    
+
+      - name: Build application on VPS
+        run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && NODE_ENV=production npm run build"  # Build the application using npm on the VPS
+
+      - name: Stop application with PM2 (if running)
+        run: |
+          ssh $USER@$VPS_IP "
+            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              npx pm2 stop '${{ env.APP_NAME }}';
+            fi
+          "
+
+      - name: Move WORKING_FOLDER to OLD_WORKING_FOLDER
+        run: ssh $USER@$VPS_IP "
+          if [ -d '$WORKING_FOLDER' ]; then
+            mv '$WORKING_FOLDER' '$OLD_WORKING_FOLDER';
+          fi"
+        
+      - name: Move NEW_WORKING_FOLDER to WORKING_FOLDER
+        run: ssh $USER@$VPS_IP "mv $NEW_WORKING_FOLDER $WORKING_FOLDER"  # Move the new working folder to the working folder on the VPS
+
+      - name: Restart application with PM2
+        run: | 
+          ssh $USER@$VPS_IP "
+            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              npx pm2 restart '${{ env.APP_NAME }}';
+            else
+              npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+            fi
+            npx pm2 save
+          "
+
+```
 
 
 <h2>Demo</h2>
-....
+The follwoing is an images of a success workflow run
+
+<img src='./figs/success-run.png'/>
+
+The follwoing is an images of the workflow details
+<img src='./figs/success-run-details.png'/>
+
 
 <h2>Points of Interest</h2>
 <ul>
