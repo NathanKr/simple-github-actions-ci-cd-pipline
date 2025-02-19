@@ -1,5 +1,5 @@
 <h1>Project Name</h1>
-Simple github actions CI\CD pipeline
+Simple CI\CD workflow with github actions
 
 <h2>Project Description</h2>
 Provide simple github actions workflow of CI\CD pipeline for private repo and run it on digital ocean droplet - VPS
@@ -8,8 +8,11 @@ Provide simple github actions workflow of CI\CD pipeline for private repo and ru
 I all ready have a workflow which invokes unit test - <a href='#ref1'>[1]</a> and a workflow that deploy a private repo on vps - <a href='#ref3'>[3]</a> but it does not handles issues like installing depencies , compiling and stop\start the process . All will be done in this repository using a github actions workflow
 
 <h2>Installation</h2>
+<h3>Github actions secrets</h3>
 Set VPS_IP and VPS_CICD_PRIVATE_KEY as in <a href='#ref3'>[3]</a>
 
+<h3>VPS</h3>
+i concentrate here on ci \ cd pipline thus assume the VPS is configured such that it was all ready able to run the workflow at least once . Thus : user cicd exist , node\npm is installed , ngnix is ok and so on
 
 <h2>Usage</h2>
 
@@ -44,12 +47,6 @@ It is exepected that you take the simple-ci-cd.yml workflow , copy it to your re
 <ul>
 <li>automatic , obseravable  free workflow to be installed upon push repo (including private) on VPS</li>
 <li>I want the workflow to keep the prev clone so i can do roolback if required</li>
-</ul>
-
-
-<h3>Assumptions</h3>
-<ul>
-<li>i concentrate here on ci \ cd and assume the VPS is configured such that it was all ready able to run the workflow at least once . thus : user cicd exist , node\npm is installed , ngnix is ok</li>
 </ul>
 
 
@@ -181,6 +178,7 @@ The follwoing is an images of the workflow details
 <ul>
 <li>Try to do more generic workflow : may be put operations in bash scripts</li>
 <li>Use for more realistic repo e.g. next.js with environemnt variable - github.run_number. This increment but one on every run and is id also on the github repo datshboard under actions</li>
+<li>Currently the github token is copied to the vps (and later deleted) but altough the vps should be secured its not optimal for security reasons. you might clone the repo on the runner and copy it to vps </li>
 </ul>
 
 <h2>Open issues</h2>
