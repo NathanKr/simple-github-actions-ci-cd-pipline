@@ -1,6 +1,7 @@
 name: Simple GitHub Actions CI/CD Pipeline
 
 on:
+  # workflow_dispatch: #todo nath remove and uncomment next 3 lines
   push:
     branches:
       - main
@@ -63,16 +64,26 @@ jobs:
         run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && NODE_ENV=production npm run build"  # Build the application using npm on the VPS
 
       - name: Stop application with PM2 (if running)
-        run:  |
+        run: |
           ssh $USER@$VPS_IP "
-          npx pm2 list | grep -q '${{ env.APP_NAME }}'
-          if [ $? -eq 0 ]; then  # Check if the exit status ($?) is 0
-            npx pm2 stop '${{ env.APP_NAME }}';
-            echo 'Process ${{ env.APP_NAME }} stopped.';
-          else
-            echo 'Process ${{ env.APP_NAME }} not found, skipping stop command.';
-          fi
+            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+              npx pm2 stop '${{ env.APP_NAME }}';
+            else
+              echo 'PM2 process not found, skipping stop command.'
+            fi
           "
+
+      # - name: Stop application with PM2 (if running)
+      #   run:  |
+      #     ssh $USER@$VPS_IP "
+      #     npx pm2 list | grep -q '${{ env.APP_NAME }}'
+      #     if [ $? -eq 0 ]; then  # Check if the exit status ($?) is 0
+      #       npx pm2 stop '${{ env.APP_NAME }}';
+      #       echo 'Process ${{ env.APP_NAME }} stopped.';
+      #     else
+      #       echo 'Process ${{ env.APP_NAME }} not found, skipping stop command.';
+      #     fi
+      #     "
 
 
       - name: Move WORKING_FOLDER to OLD_WORKING_FOLDER
@@ -90,8 +101,19 @@ jobs:
             if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
               npx pm2 restart '${{ env.APP_NAME }}';
             else
-              npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+              cd $WORKING_FOLDER && npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
             fi
             npx pm2 save
           "
+
+      # - name: Restart application with PM2
+      #   run: | 
+      #     ssh $USER@$VPS_IP "
+      #       if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+      #         npx pm2 restart '${{ env.APP_NAME }}';
+      #       else
+      #         npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+      #       fi
+      #       npx pm2 save
+      #     "
 
