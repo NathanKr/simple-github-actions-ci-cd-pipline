@@ -90,10 +90,11 @@ jobs:
       - name: Restart application with PM2
         run: | 
           ssh $USER@$VPS_IP "
+            cd $WORKING_FOLDER
             if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
               npx pm2 restart '${{ env.APP_NAME }}';
             else
-              cd $WORKING_FOLDER && npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+              npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
             fi
             npx pm2 save
           "
