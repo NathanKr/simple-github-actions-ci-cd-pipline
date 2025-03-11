@@ -85,7 +85,7 @@ jobs:
         
       - name: Move NEW_WORKING_FOLDER to WORKING_FOLDER
         run: ssh $USER@$VPS_IP "mv $NEW_WORKING_FOLDER $WORKING_FOLDER"  # Move the new working folder to the working folder on the VPS
-
+ 
       - name: Restart application with PM2
         run: |
           ssh $USER@$VPS_IP "
