@@ -93,8 +93,10 @@ jobs:
             npx pm2 list | grep -qiw '${{ env.APP_NAME }}' # added iw for better matching
             if [ $? -eq 0 ]; then
               npx pm2 restart '${{ env.APP_NAME }}';
+              echo "Process ${{ env.APP_NAME }} found so restart."
             else
               npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
+              echo "Process ${{ env.APP_NAME }} not found so start."
             fi
             npx pm2 save --force
           "
