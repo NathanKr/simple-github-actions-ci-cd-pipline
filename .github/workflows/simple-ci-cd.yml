@@ -67,8 +67,11 @@ jobs:
       - name: Stop application with PM2 (if running)
         run: |
           ssh "$USER@$VPS_IP" '
-            npx pm2 list | grep -qiw "${{ env.APP_NAME }}" 
-            if [ $? -eq 0 ]; then
+            set +e # disables the behavior, allowing the script to continue executing even if a command returns a non-zero exit code
+            npx pm2 list | grep  "${{ env.APP_NAME }}" 
+            EXIT_CODE=$?
+            set -e  # enables the behavior where any command that returns a non-zero exit code will cause the script to exit immediately. 
+            if [ $EXIT_CODE -eq 0 ]; then
               npx pm2 stop "${{ env.APP_NAME }}"
               echo "Process ${{ env.APP_NAME }} stopped."
             else
@@ -90,8 +93,11 @@ jobs:
         run: |
           ssh $USER@$VPS_IP "
             cd $WORKING_FOLDER
-            npx pm2 list | grep -qiw '${{ env.APP_NAME }}' 
-            if [ $? -eq 0 ]; then
+            set +e # disables the behavior, allowing the script to continue executing even if a command returns a non-zero exit code
+            npx pm2 list | grep  '${{ env.APP_NAME }}' 
+            EXIT_CODE=$?
+            set -e  # enables the behavior where any command that returns a non-zero exit code will cause the script to exit immediately. 
+            if [ $EXIT_CODE -eq 0 ]; then
               npx pm2 restart '${{ env.APP_NAME }}';
               echo "Process ${{ env.APP_NAME }} found so restart."
             else
