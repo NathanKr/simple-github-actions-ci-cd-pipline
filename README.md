@@ -140,7 +140,7 @@ set -e
       - name: Stop application with PM2 (if running)
         run: |
           ssh "$USER@$VPS_IP" '
-            npx pm2 list | grep -qiw "${{ env.APP_NAME }}"
+            npx pm2 list | grep -qiw "${{ env.APP_NAME }}" # added iw for better matching
             if [ $? -eq 0 ]; then
               npx pm2 stop "${{ env.APP_NAME }}"
               echo "Process ${{ env.APP_NAME }} stopped."
@@ -148,18 +148,6 @@ set -e
               echo "Process ${{ env.APP_NAME }} not found, skipping stop command."
             fi
           '
-
-      # # handle also grep not finding
-      # - name: Stop application with PM2 (if running)
-      #   run: |
-      #     ssh "$USER@$VPS_IP" '
-      #       if npx pm2 list | grep -q "${{ env.APP_NAME }}"; then 
-      #         npx pm2 stop "${{ env.APP_NAME }}"
-      #         echo "Process ${{ env.APP_NAME }} stopped."
-      #       else
-      #         echo "Process ${{ env.APP_NAME }} not found, skipping stop command."
-      #       fi
-      #     '
 
 
       - name: Move WORKING_FOLDER to OLD_WORKING_FOLDER
@@ -172,15 +160,17 @@ set -e
         run: ssh $USER@$VPS_IP "mv $NEW_WORKING_FOLDER $WORKING_FOLDER"  # Move the new working folder to the working folder on the VPS
 
       - name: Restart application with PM2
-        run: | 
+        run: |
           ssh $USER@$VPS_IP "
-            if npx pm2 list | grep -q '${{ env.APP_NAME }}'; then
+            npx pm2 list | grep -qiw '${{ env.APP_NAME }}' # added iw for better matching
+            if [ $? -eq 0 ]; then
               npx pm2 restart '${{ env.APP_NAME }}';
             else
               npx pm2 start npm --name '${{ env.APP_NAME }}' -- run start;
             fi
             npx pm2 save
           "
+
 
 ```
 
