@@ -67,7 +67,7 @@ jobs:
       - name: Stop application with PM2 (if running)
         run: |
           ssh "$USER@$VPS_IP" '
-            npx pm2 list | grep -qiw "${{ env.APP_NAME }}" # added iw for better matching
+            npx pm2 list | grep -qiw "${{ env.APP_NAME }}" 
             if [ $? -eq 0 ]; then
               npx pm2 stop "${{ env.APP_NAME }}"
               echo "Process ${{ env.APP_NAME }} stopped."
@@ -90,7 +90,7 @@ jobs:
         run: |
           ssh $USER@$VPS_IP "
             cd $WORKING_FOLDER
-            npx pm2 list | grep -qiw '${{ env.APP_NAME }}' # added iw for better matching
+            npx pm2 list | grep -qiw '${{ env.APP_NAME }}' 
             if [ $? -eq 0 ]; then
               npx pm2 restart '${{ env.APP_NAME }}';
               echo "Process ${{ env.APP_NAME }} found so restart."
