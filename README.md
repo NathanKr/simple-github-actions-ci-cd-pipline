@@ -137,17 +137,29 @@ set -e
         run: ssh $USER@$VPS_IP "cd $NEW_WORKING_FOLDER && NODE_ENV=production npm run build"  # Build the application using npm on the VPS
 
 
-      # handle also grep not finding
       - name: Stop application with PM2 (if running)
         run: |
           ssh "$USER@$VPS_IP" '
-            if npx pm2 list | grep -q "${{ env.APP_NAME }}"; then 
+            npx pm2 list | grep -qiw "${{ env.APP_NAME }}"
+            if [ $? -eq 0 ]; then
               npx pm2 stop "${{ env.APP_NAME }}"
               echo "Process ${{ env.APP_NAME }} stopped."
             else
               echo "Process ${{ env.APP_NAME }} not found, skipping stop command."
             fi
           '
+
+      # # handle also grep not finding
+      # - name: Stop application with PM2 (if running)
+      #   run: |
+      #     ssh "$USER@$VPS_IP" '
+      #       if npx pm2 list | grep -q "${{ env.APP_NAME }}"; then 
+      #         npx pm2 stop "${{ env.APP_NAME }}"
+      #         echo "Process ${{ env.APP_NAME }} stopped."
+      #       else
+      #         echo "Process ${{ env.APP_NAME }} not found, skipping stop command."
+      #       fi
+      #     '
 
 
       - name: Move WORKING_FOLDER to OLD_WORKING_FOLDER
